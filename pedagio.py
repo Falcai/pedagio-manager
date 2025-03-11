@@ -9,12 +9,15 @@ from docx.oxml import OxmlElement
 from docx.enum.table import WD_ALIGN_VERTICAL
 from datetime import datetime
 
+# Constantes
 JSON_FILE = "pedagios.json"
 
 # Dicionário para armazenar os pedágios com seus dados
 pedagios_data = {}
 
+# Funções de manipulação de arquivos e dados
 def open_doc(file_path):
+    """Abre um documento Word."""
     try:
         doc = Document(file_path)
     except Exception as e:
@@ -23,19 +26,17 @@ def open_doc(file_path):
     return doc
 
 def add_entry(doc, data, local, valor, cupom_fiscal, file_path):
+    """Adiciona uma entrada na tabela do documento."""
     table = doc.tables[0]
     num_ordem = len(table.rows)
     row_cells = table.add_row().cells
 
-    # Nº Ordem
-    row_cells[0].text = str(num_ordem)
-    # Data
-    row_cells[1].text = data
-    # Valor
-    valor = f"R${valor:.2f}".replace('.', ',')  # Formatar para "R$xx,xx"
-    row_cells[2].text = valor
-    # Local
-    row_cells[3].text = local
+    # Preenche as células da nova linha
+    row_cells[0].text = str(num_ordem)  # Nº Ordem
+    row_cells[1].text = data  # Data
+    row_cells[2].text = f"R${float(valor):.2f}".replace('.', ',')  # Valor
+    row_cells[3].text = local  # Local
+
     # Documento Fiscal - Utilização
     pedagio_info = pedagios_data.get(local)
     if pedagio_info:
@@ -59,6 +60,7 @@ def add_entry(doc, data, local, valor, cupom_fiscal, file_path):
     lines_added_var.set(f"Total de linhas adicionadas: {num_ordem}")
 
 def format_row_cells(row_cells):
+    """Formata as células da linha adicionada."""
     for cell in row_cells:
         cell.vertical_alignment = WD_ALIGN_VERTICAL.BOTTOM
         if not cell.paragraphs:
@@ -70,6 +72,7 @@ def format_row_cells(row_cells):
             run.font.size = Pt(11)
 
 def add_borders_to_cells(cells):
+    """Adiciona bordas às células."""
     for cell in cells:
         tc = cell._element
         tcPr = tc.get_or_add_tcPr()
@@ -77,21 +80,23 @@ def add_borders_to_cells(cells):
         for border_name in ["top", "left", "bottom", "right"]:
             border = OxmlElement(f'w:{border_name}')
             border.set(qn('w:val'), 'single')
-            border.set(qn('w:sz'), '4')  # Ajustar o tamanho conforme necessário
+            border.set(qn('w:sz'), '4')
             border.set(qn('w:space'), '0')
             border.set(qn('w:color'), '000000')
             tcBorders.append(border)
         tcPr.append(tcBorders)
 
 def format_date(date_str):
+    """Formata a data para o formato dd/mm/aaaa."""
     if len(date_str) == 8:
         return f"{date_str[:2]}/{date_str[2:4]}/{date_str[4:]}"
     else:
         raise ValueError("Erro: Data inválida. Use o formato ddmmaaaa sem barras.")
 
 def submit(*args):
+    """Processa a submissão do formulário."""
     data = entry_data.get()
-    valor = entry_valor.get().replace(',', '.')  # Substitui a vírgula por ponto para garantir formato float
+    valor = entry_valor.get().replace(',', '.')  # Converte para float
     cupom_fiscal = entry_cupom_fiscal.get()
     file_path = file_path_entry.get()
 
@@ -105,9 +110,7 @@ def submit(*args):
         return
 
     try:
-        # Formata a data para dd/mm/aaaa
         formatted_date = format_date(data)
-        # Valida a data formatada
         datetime.strptime(formatted_date, '%d/%m/%Y')
     except ValueError as ve:
         message_var.set(str(ve))
@@ -122,16 +125,19 @@ def submit(*args):
             message_var.set("Erro: Pedágio não encontrado.")
 
 def browse_file():
+    """Abre um diálogo para selecionar um arquivo."""
     file_path = filedialog.askopenfilename(filetypes=[("Documentos Word", "*.docx")])
     if file_path:
         file_path_entry.delete(0, tk.END)
         file_path_entry.insert(0, file_path)
 
 def open_pedagio_manager():
+    """Abre a janela de gerenciamento de pedágios."""
     manager_window = tk.Toplevel(root)
     manager_window.title("Gerenciador de Pedágios")
     
     def update_pedagios_list():
+        """Atualiza a lista de pedágios na interface."""
         for i in tree.get_children():
             tree.delete(i)
         for key, value in pedagios_data.items():
@@ -139,10 +145,11 @@ def open_pedagio_manager():
                 tree.insert('', 'end', values=(key, pedagio['cnpj'], pedagio['razao_social'], f"R${pedagio['valor']}"))
 
     def add_pedagio():
+        """Adiciona um novo pedágio."""
         local = entry_local.get()
         cnpj = entry_cnpj.get()
         razao_social = entry_razao_social.get()
-        valor = entry_valor_pedagio.get().replace(',', '.')  # Substitui a vírgula por ponto para garantir formato float
+        valor = entry_valor_pedagio.get().replace(',', '.')  # Converte para float
         if local and cnpj and razao_social and valor:
             if local in pedagios_data:
                 pedagios_data[local].append({"cnpj": cnpj, "razao_social": razao_social, "valor": valor})
@@ -155,6 +162,7 @@ def open_pedagio_manager():
             message_var.set("Erro: Todos os campos são obrigatórios para adicionar um pedágio.")
     
     def delete_pedagio():
+        """Remove um pedágio selecionado."""
         selected_item = tree.selection()
         if selected_item:
             item = tree.item(selected_item)
@@ -170,6 +178,7 @@ def open_pedagio_manager():
             message_var.set("Erro: Selecione um pedágio para remover.")
     
     def update_pedagio():
+        """Atualiza um pedágio selecionado."""
         selected_item = tree.selection()
         if selected_item:
             item = tree.item(selected_item)
@@ -177,7 +186,7 @@ def open_pedagio_manager():
             cnpj = item['values'][1]
             new_cnpj = entry_cnpj.get()
             new_razao_social = entry_razao_social.get()
-            new_valor = entry_valor_pedagio.get().replace(',', '.')  # Substitui a vírgula por ponto para garantir formato float
+            new_valor = entry_valor_pedagio.get().replace(',', '.')  # Converte para float
             if new_cnpj and new_razao_social and new_valor:
                 pedagio_index = next(index for index, pedagio in enumerate(pedagios_data[local]) if pedagio['cnpj'] == cnpj)
                 pedagios_data[local][pedagio_index] = {"cnpj": new_cnpj, "razao_social": new_razao_social, "valor": new_valor}
@@ -189,6 +198,7 @@ def open_pedagio_manager():
         else:
             message_var.set("Erro: Selecione um pedágio para atualizar.")
 
+    # Interface do gerenciador de pedágios
     tk.Label(manager_window, text="Local:").grid(row=0, column=0, padx=10, pady=5)
     entry_local = tk.Entry(manager_window)
     entry_local.grid(row=0, column=1, padx=10, pady=5)
@@ -221,10 +231,12 @@ def open_pedagio_manager():
     update_pedagios_list()
 
 def save_pedagios_data():
+    """Salva os dados dos pedágios em um arquivo JSON."""
     with open(JSON_FILE, 'w') as file:
         json.dump(pedagios_data, file)
 
 def load_pedagios_data():
+    """Carrega os dados dos pedágios de um arquivo JSON."""
     try:
         with open(JSON_FILE, 'r') as file:
             return json.load(file)
@@ -234,11 +246,12 @@ def load_pedagios_data():
 # Carrega os pedágios já cadastrados
 pedagios_data = load_pedagios_data()
 
-# Configuração da interface gráfica
+# Configuração da interface gráfica principal
 root = tk.Tk()
 root.title("Automatização de Preenchimento de Tabela")
 
 def format_data_entry(event=None):
+    """Formata a entrada de data."""
     data = entry_data.get().replace("/", "")
     if len(data) == 10 and data[2] == data[5] == "/":
         formatted_data = f"{data[:2]}{data[3:5]}{data[6:]}"
