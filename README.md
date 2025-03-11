@@ -3,17 +3,16 @@ openpyxl
 python-docx
 tkinter
 
-# Conteúdo do README.md
-# Automatização de Preenchimento de Tabela de Pedágios
+# Automatização de Preenchimento de Tabelas de Pedágios
 
-Este projeto tem como objetivo automatizar o preenchimento de tabelas de pedágios em documentos Word.
+Este projeto é uma ferramenta de automação para preencher tabelas em documentos Word com dados de pedágios, como data, valor, local e cupom fiscal. Ele utiliza uma interface gráfica simples (GUI) para facilitar a inserção dos dados e gerenciar informações sobre os pedágios.
 
 ## Funcionalidades
-- Adiciona entradas em uma tabela existente.
-- Gerencia informações de pedágios (CNPJ, Razão Social, Valor).
-- Interface gráfica desenvolvida com Tkinter.
-- Armazena dados de pedágios em um arquivo JSON.
-
+- Adicionar entradas de pedágios em tabelas de documentos Word (.docx).
+- Gerenciar informações de pedágios (local, CNPJ, razão social e valor).
+- Formatação automática de células e bordas nas tabelas.
+- Validação de dados e tratamento de erros.
+  
 ## Como Usar
 1. Instale as dependências com:
    ```bash
@@ -37,3 +36,9 @@ Este projeto tem como objetivo automatizar o preenchimento de tabelas de pedági
 
 ## Licença
 Este projeto está sob a licença MIT.
+
+Nome: Felipe Falcai
+
+Email: [felipefalcai@hotmail.com]
+
+GitHub: Falcai
