@@ -24,18 +24,15 @@ Este projeto é uma ferramenta de automação para preencher tabelas em document
    ```
 3. Utilize a interface gráfica para selecionar um arquivo Word e adicionar registros.
 
-## Estrutura do Projeto
-- `main.py`: Código principal da aplicação.
-- `pedagios.json`: Banco de dados local para armazenar pedágios.
-- `requirements.txt`: Lista de dependências necessárias.
-- `.gitignore`: Define arquivos a serem ignorados pelo Git.
-
 ## Requisitos
 - Python 3.8+
 - Bibliotecas: `tkinter`, `python-docx`, `openpyxl`
 
 ## Licença
 Este projeto está sob a licença MIT.
+
+## Contato
+Esse é o meu primeiro projeto que fiz no meu estágio trabalhando em uma Prefeitura Municipal, caso queira dar sugestões segue o meu contato:
 
 Nome: Felipe Falcai
 
