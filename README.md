@@ -1,10 +1,3 @@
-├── pedagio_auto/
-│   ├── main.py  # Código principal
-│   ├── pedagios.json  # Banco de dados JSON
-│   ├── README.md  # Explicação do projeto
-│   ├── requirements.txt  # Dependências do projeto
-│   ├── .gitignore  # Arquivos a serem ignorados pelo Git
-
 # Conteúdo do requirements.txt
 openpyxl
 python-docx
