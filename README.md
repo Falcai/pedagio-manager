@@ -1,8 +1,3 @@
-# Conteúdo do requirements.txt
-openpyxl
-python-docx
-tkinter
-
 # Automatização de Preenchimento de Tabelas de Pedágios
 
 Este projeto é uma ferramenta de automação para preencher tabelas em documentos Word com dados de pedágios, como data, valor, local e cupom fiscal. Ele utiliza uma interface gráfica simples (GUI) para facilitar a inserção dos dados e gerenciar informações sobre os pedágios.
